@@ -1,0 +1,68 @@
+# America at 250 — Race Sentiment Project
+
+A lightweight pipeline for downloading open U.S. history textbooks, extracting every sentence that mentions racial groups, and tracking how sentiment toward those groups changes over time.
+
+## Quick Start (Technical Users)
+
+1. **Environment**
+   - Python 3.10+ (script currently tested with Python 3.13 + `venv`).
+   - `pip install -r requirements.txt` (or manually install `pandas`, `pdfplumber`, `nltk`, `transformers`, `torch`, `tqdm`, `matplotlib`, `requests`).
+2. **NLTK resources**
+   - The script auto-downloads `punkt`, `punkt_tab`, and `vader_lexicon` into `~/nltk_data`. No manual step needed.
+3. **Run the pipeline**
+   - `python src/race_sentiment_project.py`
+   - PDFs download once to `data/raw_pdfs/`. Subsequent runs reuse cached files.
+4. **Outputs**
+   - Intermediate CSV: `data/processed/all_sentences_raw.csv`
+   - Race + sentiment dataset: `data/processed/race_sentences_with_sentiment_both_models.csv`
+   - Time series CSVs: `data/processed/race_sent_timeseries_{vader,transformer}.csv`
+   - Figure: `outputs/figures/race_sentiment_timeseries_vader.png`
+
+## Non-Technical Summary
+
+- **What it does:** The script gathers several free U.S. history textbooks, reads every page, and looks for sentences describing racial or ethnic groups.
+- **Why it matters:** By tracking the emotional tone of those sentences decade by decade, you can see how the language around each group becomes more positive or negative over time.
+- **How to use the results:** Open the generated figure in `outputs/figures/` for a quick visual, or filter the CSVs to explore particular races, decades, or textbooks. No coding background is required to read the CSVs—Excel or Google Sheets works fine.
+
+## Technical Deep Dive
+
+| Stage | Details |
+| --- | --- |
+| **Input acquisition** | `download_textbook_pdfs()` pulls CC-licensed PDFs (OpenStax, American Yawp volumes I & II, History in the Making) into `data/raw_pdfs/`. Files are skipped if already present. |
+| **Text extraction** | `pdfplumber` reads each page, captures raw text, and infers an approximate historical year using regex-based year-range detection. Results become rows in `all_sentences_raw.csv`. |
+| **Sentence segmentation** | `nltk.sent_tokenize` (with `punkt` + `punkt_tab`) splits page text into clean sentences. |
+| **Race tagging** | `detect_races()` matches lowercased sentences against curated lexicons for five racial categories (Black/African American, Indigenous/Native, Asian/Asian American, Latino/Hispanic, White/European American). |
+| **Sentiment analysis** | Two models score each race-mention sentence: VADER (rule-based compound score) and `distilbert-base-uncased-finetuned-sst-2-english` (transformers pipeline). Transformer outputs are converted to signed scores (positive = +confidence, negative = -confidence). |
+| **Aggregation & viz** | Sentiments are averaged by race and historical decade. VADER time series are plotted with Matplotlib and saved to `outputs/figures/`. Transformer time series CSV is saved for robustness checks. |
+
+### Performance Notes
+
+- Hugging Face downloads (~270 MB) occur on the first run; later runs are cached in `~/.cache/huggingface/`.
+- Apple Silicon users automatically leverage the MPS GPU backend (`Device set to use mps:0`).
+- Processing ~54k sentences currently takes ~20s on an M3-era laptop.
+
+## Repository Layout
+
+```
+data/
+  raw_pdfs/          # cached textbooks (downloaded automatically)
+  processed/         # CSV outputs
+outputs/
+  figures/           # generated plots
+src/
+  race_sentiment_project.py
+```
+
+## Troubleshooting
+
+- **Missing Python packages:** Ensure your virtual environment is active when installing dependencies. `pip install -r requirements.txt` is the fastest route.
+- **NLTK LookupError:** The updated script now downloads `punkt_tab` automatically. Delete `~/nltk_data/tokenizers/punkt_tab` if corruption persists and rerun the script.
+- **Matplotlib not installed:** Install with `pip install matplotlib` (or add to requirements) if VS Code reports an unresolved import.
+
+## Extending the Project
+
+1. Add more PDFs to `TEXTBOOK_PDFS` inside `src/race_sentiment_project.py`, including a unique `id`, human-readable `title`, download `url`, and `pub_year`.
+2. Expand `RACE_TERMS` with additional vocab specific to the period or group you care about.
+3. Uncomment the transformer plot section to visualize BERT-based trends alongside VADER.
+
+Questions or ideas? Feel free to adapt the pipeline—everything runs from a single entry point. Happy digging!

@@ -1,0 +1,83 @@
+race,decade,sentiment
+Asian/Asian American,1830,-0.1237
+Asian/Asian American,1860,0.4215
+Asian/Asian American,1870,-0.05536
+Asian/Asian American,1880,0.23835
+Asian/Asian American,1890,0.4215
+Asian/Asian American,1900,-0.6213
+Asian/Asian American,1910,0.2732
+Asian/Asian American,1930,-0.5795333333333333
+Asian/Asian American,1940,-0.3783285714285714
+Asian/Asian American,1950,-0.48597999999999997
+Asian/Asian American,1970,0.0
+Black/African American,1770,-0.12084285714285714
+Black/African American,1780,0.21115
+Black/African American,1790,0.032737499999999996
+Black/African American,1800,-0.23886666666666667
+Black/African American,1820,0.30712307692307694
+Black/African American,1830,0.2073814814814815
+Black/African American,1840,0.15691304347826088
+Black/African American,1850,-0.34647727272727274
+Black/African American,1860,0.018290909090909083
+Black/African American,1870,0.12542358490566038
+Black/African American,1880,-0.04997619047619047
+Black/African American,1890,-0.1020375
+Black/African American,1900,-0.014173015873015872
+Black/African American,1910,-0.17723529411764707
+Black/African American,1920,0.05905609756097561
+Black/African American,1930,-0.03675087719298245
+Black/African American,1940,-0.2487318181818182
+Black/African American,1950,-0.006538235294117647
+Black/African American,1970,0.170825
+Black/African American,1990,0.07645555555555555
+Indigenous/Native,1770,-0.10443333333333334
+Indigenous/Native,1780,-0.4517333333333333
+Indigenous/Native,1790,0.12079444444444443
+Indigenous/Native,1800,0.1779
+Indigenous/Native,1810,0.31245
+Indigenous/Native,1820,-0.19948333333333332
+Indigenous/Native,1830,0.09540416666666668
+Indigenous/Native,1840,0.04438823529411766
+Indigenous/Native,1860,0.7845
+Indigenous/Native,1870,-0.2815782608695652
+Indigenous/Native,1880,-0.42593333333333333
+Indigenous/Native,1890,0.1997
+Indigenous/Native,1900,0.19455
+Indigenous/Native,1930,0.015400000000000025
+Indigenous/Native,1950,0.034720000000000015
+Indigenous/Native,1970,0.33359999999999995
+Indigenous/Native,2010,0.31301999999999996
+Latino/Hispanic,1830,-0.15445
+Latino/Hispanic,1840,-0.1998
+Latino/Hispanic,1870,-0.05620000000000001
+Latino/Hispanic,1880,-0.26366
+Latino/Hispanic,1900,-0.345825
+Latino/Hispanic,1920,0.0
+Latino/Hispanic,1930,0.223725
+Latino/Hispanic,1940,-0.37382
+Latino/Hispanic,1950,0.21434782608695652
+Latino/Hispanic,1970,0.2553
+Latino/Hispanic,1990,0.0027181818181818067
+Latino/Hispanic,2010,-0.3612
+White/European American,1770,-0.15053333333333335
+White/European American,1780,0.0700375
+White/European American,1790,-0.2294076923076923
+White/European American,1800,0.2830125
+White/European American,1810,0.0
+White/European American,1820,0.2676
+White/European American,1830,-0.0015878378378378348
+White/European American,1840,-0.21054814814814815
+White/European American,1850,-0.3471166666666667
+White/European American,1860,-0.20714200000000002
+White/European American,1870,-0.16025192307692307
+White/European American,1880,-0.21200909090909092
+White/European American,1890,0.12301999999999999
+White/European American,1900,-0.06311499999999999
+White/European American,1910,-0.2612
+White/European American,1920,0.1950181818181818
+White/European American,1930,-0.19969333333333333
+White/European American,1940,-0.526325
+White/European American,1950,-0.152834375
+White/European American,1970,0.12178
+White/European American,1990,0.198925
+White/European American,2010,-0.3612
