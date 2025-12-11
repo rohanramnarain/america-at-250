@@ -18,13 +18,18 @@
       body {
         margin: 0;
         color: #0b0d18;
+        min-height: 100vh;
+        background: #090a12;
       }
 
       main {
-        max-width: 960px;
+        width: min(960px, 100%);
         margin: 0 auto;
-        padding: 2.5rem 1.5rem 3rem;
+        padding: clamp(1.75rem, 6vw, 2.5rem)
+          clamp(1rem, 5vw, 1.5rem)
+          clamp(2.5rem, 8vw, 3.25rem);
         color: #f6f7fb;
+        box-sizing: border-box;
       }
 
       header h1 {
@@ -44,36 +49,43 @@
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
-        margin: 2rem 0;
+        margin: clamp(1.5rem, 5vw, 2rem) 0;
         background: rgba(255, 255, 255, 0.04);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 16px;
         padding: 1rem 1.25rem;
+        box-sizing: border-box;
       }
 
       .controls label {
-        font-size: 0.9rem;
+        font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: #7c7f92;
+        flex: 1 1 220px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
       }
 
       select {
-        margin-top: 0.35rem;
+        width: 100%;
         padding: 0.55rem 0.75rem;
         border-radius: 999px;
         border: 1px solid rgba(255, 255, 255, 0.25);
         background: rgba(6, 6, 10, 0.65);
         color: inherit;
         font-size: 1rem;
+        min-height: 44px;
       }
 
       #chart {
         background: rgba(255, 255, 255, 0.02);
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 20px;
-        padding: 1rem;
-        min-height: 360px;
+        padding: clamp(0.75rem, 3vw, 1rem);
+        min-height: 320px;
+        overflow-x: auto;
       }
 
       .stats {
@@ -157,6 +169,8 @@
         font-size: 0.95rem;
         color: #f6f7fb;
         line-height: 1.4;
+        word-break: break-word;
+        overflow-wrap: anywhere;
       }
 
       .sentences-empty {
@@ -168,6 +182,7 @@
         margin-top: 2rem;
         font-size: 0.9rem;
         color: #aeb0c2;
+        word-break: break-word;
       }
 
       .notes code {
@@ -201,6 +216,22 @@
       @media (max-width: 600px) {
         .controls {
           flex-direction: column;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .detail-panel {
+          padding: 0.85rem 1rem;
+        }
+
+        header h1 {
+          font-size: clamp(1.75rem, 8vw, 2.5rem);
+        }
+
+        header p {
+          font-size: 0.95rem;
         }
       }
     </style>

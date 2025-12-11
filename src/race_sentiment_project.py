@@ -229,15 +229,32 @@ RACE_TERMS = {
 }
 
 
+def _compile_term_patterns(race_terms):
+    patterns = {}
+    for race, terms in race_terms.items():
+        compiled = []
+        for term in terms:
+            escaped = re.escape(term)
+            compiled.append(re.compile(rf"(?<![a-z0-9]){escaped}(?![a-z0-9])"))
+        patterns[race] = compiled
+    return patterns
+
+
+RACE_TERM_PATTERNS = _compile_term_patterns(RACE_TERMS)
+
+
 def detect_races(sentence: str, race_terms=RACE_TERMS):
     """Return a list of race categories explicitly mentioned in the sentence."""
     s = sentence.lower()
     found = set()
-    for race, terms in race_terms.items():
-        for term in terms:
-            if term in s:
-                found.add(race)
-                break
+    term_patterns = (
+        race_terms
+        if race_terms is not RACE_TERMS
+        else RACE_TERM_PATTERNS
+    )
+    for race, patterns in term_patterns.items():
+        if any(pattern.search(s) for pattern in patterns):
+            found.add(race)
     return list(found)
 
 
