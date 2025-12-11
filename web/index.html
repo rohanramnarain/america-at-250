@@ -10,16 +10,21 @@
         font-family: "Space Grotesk", "Segoe UI", Helvetica, Arial, sans-serif;
         background: #090a12;
         color: #f6f7fb;
+        --plot-tooltip-color: #0b0d18;
+        --plot-tooltip-background: #fdfdfd;
+        --plot-tooltip-border: rgba(10, 13, 30, 0.25);
       }
 
       body {
         margin: 0;
+        color: #0b0d18;
       }
 
       main {
         max-width: 960px;
         margin: 0 auto;
         padding: 2.5rem 1.5rem 3rem;
+        color: #f6f7fb;
       }
 
       header h1 {
@@ -98,6 +103,67 @@
         font-size: 1.4rem;
       }
 
+      .detail-panel {
+        margin-top: 1.25rem;
+        padding: 1rem 1.25rem;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        color: #e5e7f5;
+        min-height: 84px;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .detail-panel strong {
+        font-size: 1rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #9ca0b5;
+      }
+
+      .detail-panel span {
+        font-size: 1.1rem;
+      }
+
+      .sentence-samples {
+        margin-top: 0.75rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        padding-top: 0.75rem;
+      }
+
+      .sentence-samples em {
+        font-style: normal;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-size: 0.8rem;
+        color: #9ca0b5;
+        display: block;
+        margin-bottom: 0.4rem;
+      }
+
+      .sentence-samples ul {
+        list-style: decimal;
+        padding-left: 1.25rem;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+      }
+
+      .sentence-samples li {
+        font-size: 0.95rem;
+        color: #f6f7fb;
+        line-height: 1.4;
+      }
+
+      .sentences-empty {
+        font-size: 0.9rem;
+        color: #c9cbd6;
+      }
+
       .notes {
         margin-top: 2rem;
         font-size: 0.9rem;
@@ -110,6 +176,26 @@
         padding: 0.1rem 0.25rem;
         border-radius: 6px;
         background: rgba(255, 255, 255, 0.05);
+      }
+
+      .plot-tooltip,
+      .plot-tooltip *,
+      .plot-tip,
+      .plot-tip *,
+      .plot-tip .plot-tip-body {
+        color: var(--plot-tooltip-color) !important;
+        background: var(--plot-tooltip-background) !important;
+        background-color: var(--plot-tooltip-background) !important;
+        border: 1px solid var(--plot-tooltip-border) !important;
+        border-radius: 10px !important;
+        box-shadow: 0 8px 24px rgba(3, 4, 12, 0.2);
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+      }
+
+      .plot-tip .plot-tip-body strong,
+      .plot-tip .plot-tip-body span,
+      .plot-tip-body div {
+        color: var(--plot-tooltip-color) !important;
       }
 
       @media (max-width: 600px) {
@@ -126,7 +212,7 @@
         <p>
           Compare how U.S. history textbooks describe each racial group decade by
           decade. Switch between VADER and transformer sentiment scores and use
-          interactive tooltips to inspect specific moments.
+          the controls below to inspect specific decades and sentences.
         </p>
       </header>
 
@@ -144,16 +230,93 @@
             </option>
           </select>
         </label>
+        <label>
+          Decade focus
+          <select id="decade-select" disabled>
+            <option value="">Select a race</option>
+          </select>
+        </label>
       </section>
 
       <section id="chart"></section>
 
+      <section id="detail-panel" class="detail-panel">
+        <strong>Race + decade details</strong>
+        <span>Select a race and decade to see sentiment scores, counts, and sample sentences.</span>
+      </section>
+
       <section id="stats" class="stats"></section>
 
       <section class="notes">
-        Data source: `data/processed/race_sent_timeseries_combined.csv`. Update the
-        `DATA_URL` constant inside `web/main.js` if you deploy the visualization
-        separately (for example, hosting the CSV on Firebase Storage or a CDN).
+        <h2 style="margin-top:0">America at 250 — Race Sentiment Project</h2>
+        <p>
+          This explorer mirrors the repository README so viewers can understand
+          both the civic story and the technical machinery driving the chart.
+          Everything starts from an automated pipeline that downloads open U.S.
+          history textbooks, parses every sentence mentioning a racial group, and
+          scores tone with VADER plus DistilBERT.
+        </p>
+
+        <h3>Quick Start for developers</h3>
+        <ol>
+          <li>Use Python 3.10+ (repo tested on 3.13 with <code>venv</code>).</li>
+          <li>
+            Install deps via <code>pip install -r requirements.txt</code>
+            (pandas, pdfplumber, nltk, transformers, torch, tqdm, matplotlib,
+            requests).
+          </li>
+          <li>
+            Run <code>python src/race_sentiment_project.py</code> — the script
+            downloads PDFs once and reuses cached files.
+          </li>
+          <li>
+            Outputs land in <code>data/processed/</code> and figures sit in
+            <code>outputs/figures/</code>. Copy both
+            <code>race_sent_timeseries_combined.csv</code> and
+            <code>race_sentences_with_sentiment_both_models.csv</code> into this
+            <code>web/</code> folder (or host them elsewhere and update
+            <code>DATA_URL</code> / <code>SENTENCES_URL</code> inside
+            <code>web/main.js</code>).
+          </li>
+        </ol>
+
+        <h3>What the pipeline stores</h3>
+        <ul>
+          <li>
+            <code>all_sentences_raw.csv</code>: every textbook sentence plus
+            inferred historical decade.
+          </li>
+          <li>
+            <code>race_sentences_with_sentiment_both_models.csv</code>: one row
+            per (sentence, race) with VADER + transformer scores.
+          </li>
+          <li>
+            <code>race_sent_timeseries_{vader,transformer}.csv</code> and
+            <code>race_sent_timeseries_combined.csv</code>: race × decade means
+            plus sentence counts (the file powering this viz).
+          </li>
+          <li>
+            Figures: VADER + transformer PNGs saved to
+            <code>outputs/figures/</code>.
+          </li>
+        </ul>
+
+        <h3>Non-technical reader takeaway</h3>
+        <p>
+          The chart answers: “How did U.S. history textbooks talk about each
+          racial group across 250 years?” Positive scores indicate more favorable
+          language, negative scores flag harsher descriptions. Switch models to
+          compare human-tuned (VADER) and neural (DistilBERT) perspectives, then
+          use the race/decade selectors to inspect particular moments or choose
+          “ALL” to see how groups diverge.
+        </p>
+
+        <p style="margin-top:1rem">
+          Questions or contributions? Open an issue or extend the pipeline by
+          adding textbooks to <code>TEXTBOOK_PDFS</code>, updating
+          <code>RACE_TERMS</code>, or remixing this Observable setup for other
+          civic analyses.
+        </p>
       </section>
     </main>
 

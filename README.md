@@ -71,9 +71,9 @@ src/
 
 An Observable JS single-page prototype lives in `web/`:
 
-- `web/index.html` wires up controls and styling.
-- `web/main.js` fetches `data/processed/race_sent_timeseries_combined.csv`, renders an Observable Plot line chart, and powers race/model selectors plus tooltips.
-- Update the `DATA_URL` constant if you host the CSV elsewhere (Firebase Storage, CDN, etc.).
+- `web/index.html` wires up controls, styling, and the race/decade detail panel that shows sentiment numbers plus sample sentences.
+- `web/main.js` fetches the combined time-series CSV **and** `data/processed/race_sentences_with_sentiment_both_models.csv`, renders the chart, and keeps the race/model/decade selectors + detail panel in sync.
+- Copy both CSVs into `web/` (or host them elsewhere) before deploying; update `DATA_URL` / `SENTENCES_URL` if you move them.
 - Serve the folder with any static server (for example, `npx http-server web --cors` or Firebase Hosting) because browsers block `file://` fetches.
 
 Questions or ideas? Feel free to adapt the pipeline—everything runs from a single entry point. Happy digging!
