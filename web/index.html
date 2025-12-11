@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Race Sentiment Explorer</title>
+    <style>
+      :root {
+        color-scheme: light;
+        font-family: "Space Grotesk", "Segoe UI", Helvetica, Arial, sans-serif;
+        background: #090a12;
+        color: #f6f7fb;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      main {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 2.5rem 1.5rem 3rem;
+      }
+
+      header h1 {
+        margin: 0 0 0.5rem 0;
+        font-size: clamp(2rem, 5vw, 3rem);
+        letter-spacing: -0.02em;
+      }
+
+      header p {
+        margin: 0.25rem 0 0;
+        color: #c9cbd6;
+        font-size: 1rem;
+        max-width: 72ch;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin: 2rem 0;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 1rem 1.25rem;
+      }
+
+      .controls label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #7c7f92;
+      }
+
+      select {
+        margin-top: 0.35rem;
+        padding: 0.55rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(6, 6, 10, 0.65);
+        color: inherit;
+        font-size: 1rem;
+      }
+
+      #chart {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 1rem;
+        min-height: 360px;
+      }
+
+      .stats {
+        margin-top: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 1rem;
+      }
+
+      .stat-card {
+        padding: 1rem;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.07);
+      }
+
+      .stat-card span {
+        display: block;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: #9ca0b5;
+        margin-bottom: 0.45rem;
+      }
+
+      .stat-card strong {
+        font-size: 1.4rem;
+      }
+
+      .notes {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        color: #aeb0c2;
+      }
+
+      .notes code {
+        font-family: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
+        font-size: 0.85rem;
+        padding: 0.1rem 0.25rem;
+        border-radius: 6px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      @media (max-width: 600px) {
+        .controls {
+          flex-direction: column;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>Race Sentiment Explorer</h1>
+        <p>
+          Compare how U.S. history textbooks describe each racial group decade by
+          decade. Switch between VADER and transformer sentiment scores and use
+          interactive tooltips to inspect specific moments.
+        </p>
+      </header>
+
+      <section class="controls">
+        <label>
+          Race focus
+          <select id="race-select"></select>
+        </label>
+        <label>
+          Sentiment model
+          <select id="metric-select">
+            <option value="sentiment_vader">VADER (rule-based)</option>
+            <option value="sentiment_transformer">
+              DistilBERT (transformer)
+            </option>
+          </select>
+        </label>
+      </section>
+
+      <section id="chart"></section>
+
+      <section id="stats" class="stats"></section>
+
+      <section class="notes">
+        Data source: `data/processed/race_sent_timeseries_combined.csv`. Update the
+        `DATA_URL` constant inside `web/main.js` if you deploy the visualization
+        separately (for example, hosting the CSV on Firebase Storage or a CDN).
+      </section>
+    </main>
+
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

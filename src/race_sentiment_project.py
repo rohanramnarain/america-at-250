@@ -396,6 +396,24 @@ def main():
         PROCESSED_DIR / "race_sent_timeseries_transformer.csv", index=False
     )
 
+    ts_vader_export = ts_vader.rename(columns={"sentiment": "sentiment_vader"})
+    ts_trf_export = ts_trf.rename(
+        columns={"sentiment": "sentiment_transformer"}
+    )
+    ts_counts = (
+        race_sent_df.groupby(["race", "decade"])
+        .size()
+        .reset_index(name="n_sentences")
+    )
+    ts_combined = (
+        ts_vader_export.merge(ts_trf_export, on=["race", "decade"], how="outer")
+        .merge(ts_counts, on=["race", "decade"], how="outer")
+        .sort_values(["race", "decade"])
+    )
+    ts_combined.to_csv(
+        PROCESSED_DIR / "race_sent_timeseries_combined.csv", index=False
+    )
+
     # 5. Visualization: main VADER figure
     import matplotlib.pyplot as plt
 
@@ -418,23 +436,25 @@ def main():
     plt.savefig(out_path, dpi=300)
     print(f"Saved VADER figure to {out_path}")
 
-    # If you also want a transformer figure, uncomment below:
-    # plt.figure(figsize=(10, 6))
-    # for race, sub in ts_trf.groupby("race"):
-    #     sub = sub.sort_values("decade")
-    #     plt.plot(sub["decade"], sub["sentiment"], marker="o", label=race)
-    # plt.axhline(0, linestyle="--", linewidth=1)
-    # plt.xlabel("Approximate historical decade")
-    # plt.ylabel("Average sentiment (signed transformer score)")
-    # plt.title(
-    #     "Sentiment in U.S. History Textbooks When Describing Racial Groups Over Time\n"
-    #     "(DistilBERT SST-2 sentiment)"
-    # )
-    # plt.legend(title="Racial group")
-    # plt.tight_layout()
-    # out_path2 = FIG_DIR / "race_sentiment_timeseries_transformer.png"
-    # plt.savefig(out_path2, dpi=300)
-    # print(f"Saved transformer figure to {out_path2}")
+    # Transformer-based visualization for quick comparison with VADER
+    plt.figure(figsize=(10, 6))
+    for race, sub in ts_trf.groupby("race"):
+        sub = sub.sort_values("decade")
+        plt.plot(sub["decade"], sub["sentiment"], marker="o", label=race)
+
+    plt.axhline(0, linestyle="--", linewidth=1)
+    plt.xlabel("Approximate historical decade")
+    plt.ylabel("Average sentiment (signed transformer score)")
+    plt.title(
+        "Sentiment in U.S. History Textbooks When Describing Racial Groups Over Time\n"
+        "(DistilBERT SST-2 sentiment)"
+    )
+    plt.legend(title="Racial group")
+    plt.tight_layout()
+
+    out_path2 = FIG_DIR / "race_sentiment_timeseries_transformer.png"
+    plt.savefig(out_path2, dpi=300)
+    print(f"Saved transformer figure to {out_path2}")
 
 
 if __name__ == "__main__":
