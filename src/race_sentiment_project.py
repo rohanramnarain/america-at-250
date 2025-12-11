@@ -88,6 +88,7 @@ def download_textbook_pdfs(textbook_list=TEXTBOOK_PDFS, target_dir=RAW_PDF_DIR):
 
 # Match year ranges like "1800–1860" or "1865-77"
 YEAR_RANGE_REGEX = re.compile(r"(\d{3,4})\s*[–-]\s*(\d{2,4})")
+YEAR_SINGLE_REGEX = re.compile(r"(?<!\d)(1[5-9]\d{2}|20\d{2})(?!\d)")
 
 
 def infer_year_from_text(text: str, fallback_year: int) -> int:
@@ -109,6 +110,10 @@ def infer_year_from_text(text: str, fallback_year: int) -> int:
 
         year = int((start + end) / 2)
         return year
+
+    single_years = [int(match) for match in YEAR_SINGLE_REGEX.findall(text)]
+    if single_years:
+        return single_years[-1]
 
     return fallback_year
 
@@ -133,16 +138,19 @@ def extract_sentences_from_pdf(pdf_path: Path, book_id: str, book_title: str, pu
             last_year = inferred_year
 
             sentences = sent_tokenize(text)
+            last_sentence_year = inferred_year
             for sent in sentences:
                 clean_sent = " ".join(sent.split())
                 if not clean_sent:
                     continue
+                sentence_year = infer_year_from_sentence(clean_sent, last_sentence_year)
+                last_sentence_year = sentence_year
                 records.append(
                     {
                         "book_id": book_id,
                         "book_title": book_title,
                         "pub_year": pub_year,
-                        "hist_year": inferred_year,
+                        "hist_year": sentence_year,
                         "page": page_num,
                         "sentence": clean_sent,
                     }
@@ -256,6 +264,14 @@ def detect_races(sentence: str, race_terms=RACE_TERMS):
         if any(pattern.search(s) for pattern in patterns):
             found.add(race)
     return list(found)
+
+
+def infer_year_from_sentence(sentence: str, fallback_year: int) -> int:
+    """Prefer explicit years inside the sentence; otherwise hold the last known year."""
+    years = [int(match) for match in YEAR_SINGLE_REGEX.findall(sentence)]
+    if years:
+        return years[-1]
+    return fallback_year
 
 
 # ---------- Sentiment models: VADER + DistilBERT ----------
